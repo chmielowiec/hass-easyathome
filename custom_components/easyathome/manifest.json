@@ -1,0 +1,19 @@
+{
+  "domain": "easyathome",
+  "name": "Easy@Home",
+  "version": "0.1.0",
+  "codeowners": ["@chmielowiec"],
+  "config_flow": true,
+  "documentation": "https://github.com/chmielowiec/hass-easyathome",
+  "issue_tracker": "https://github.com/chmielowiec/hass-easyathome/issues",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "requirements": ["easyathome-ble==0.1.0"],
+  "dependencies": ["bluetooth_adapters"],
+  "bluetooth": [
+    {
+      "connectable": true,
+      "service_uuid": "0000ffe0-0000-1000-8000-00805f9b34fb"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Do you want to set up {name}?"
+      },
+      "user": {
+        "data": {
+          "address": "Device"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Device is already configured",
+      "no_devices_found": "No Easy@Home devices found"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "temperature": {
+        "name": "Temperature"
+      }
+    },
+    "button": {
+      "sync_time": {
+        "name": "Sync time"
+      },
+      "set_celsius": {
+        "name": "Set celsius"
+      }
+    }
+  },
+  "exceptions": {
+    "no_bleak_scanner": {
+      "message": "No Bluetooth adapter found. Please ensure Bluetooth is enabled."
+    }
+  }
+}

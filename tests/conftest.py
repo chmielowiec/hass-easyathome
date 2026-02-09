@@ -4,7 +4,9 @@ from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from homeassistant.components.bluetooth import BluetoothServiceInfo
+from bleak.backends.device import BLEDevice
+from bleak.backends.scanner import AdvertisementData
+from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 
 from custom_components.easyathome.const import DOMAIN
 
@@ -62,12 +64,36 @@ def mock_temperature_measurement():
 @pytest.fixture
 def discovery_info():
     """Create discovery info."""
-    return BluetoothServiceInfo(
-        name="EBT-300",
-        address="AA:BB:CC:DD:EE:FF",
-        rssi=-60,
-        manufacturer_data={},
-        service_data={},
-        service_uuids=["0000ffe0-0000-1000-8000-00805f9b34fb"],
-        source="local",
+    name = "EBT-300"
+    address = "AA:BB:CC:DD:EE:FF"
+    rssi = -60
+    manufacturer_data: dict[int, bytes] = {}
+    service_data: dict[str, bytes] = {}
+    service_uuids = ["0000ffe0-0000-1000-8000-00805f9b34fb"]
+    source = "local"
+
+    device = BLEDevice(address, name, None)
+    advertisement = AdvertisementData(
+        local_name=name,
+        manufacturer_data=manufacturer_data,
+        service_data=service_data,
+        service_uuids=service_uuids,
+        tx_power=None,
+        rssi=rssi,
+        platform_data=(),
+    )
+    return BluetoothServiceInfoBleak(
+        name,
+        address,
+        rssi,
+        manufacturer_data,
+        service_data,
+        service_uuids,
+        source,
+        device,
+        advertisement,
+        True,
+        0.0,
+        None,
+        None,
     )

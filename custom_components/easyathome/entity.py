@@ -35,4 +35,6 @@ class EasyHomeEntity(CoordinatorEntity[EasyHomeDataUpdateCoordinator]):
     @property
     def available(self) -> bool:
         """Return True if the entity is available."""
-        return super().available and self.coordinator.device.connected
+        # Preserve last known measurement even if the device powers off; availability
+        # tracks having data rather than current connection state.
+        return super().available and self.coordinator.data is not None

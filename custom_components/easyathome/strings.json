@@ -20,14 +20,6 @@
       "temperature": {
         "name": "Temperature"
       }
-    },
-    "button": {
-      "sync_time": {
-        "name": "Sync time"
-      },
-      "set_celsius": {
-        "name": "Set celsius"
-      }
     }
   },
   "exceptions": {

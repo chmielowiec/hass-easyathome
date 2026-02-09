@@ -32,8 +32,11 @@ def mock_ble_device():
 def mock_advertisement_data():
     """Create mock advertisement data."""
     ad_data = MagicMock()
-    ad_data.local_name = "EBT-300"
-    ad_data.service_uuids = ["0000ffe0-0000-1000-8000-00805f9b34fb"]
+    ad_data.local_name = "yuncheng_a33"
+    ad_data.service_uuids = [
+        "00001809-0000-1000-8000-00805f9b34fb",
+        "0000fef5-0000-1000-8000-00805f9b34fb",
+    ]
     ad_data.rssi = -60
     return ad_data
 
@@ -64,12 +67,15 @@ def mock_temperature_measurement():
 @pytest.fixture
 def discovery_info():
     """Create discovery info."""
-    name = "EBT-300"
+    name = "yuncheng_a33"
     address = "AA:BB:CC:DD:EE:FF"
     rssi = -60
     manufacturer_data: dict[int, bytes] = {}
     service_data: dict[str, bytes] = {}
-    service_uuids = ["0000ffe0-0000-1000-8000-00805f9b34fb"]
+    service_uuids = [
+        "00001809-0000-1000-8000-00805f9b34fb",
+        "0000fef5-0000-1000-8000-00805f9b34fb",
+    ]
     source = "local"
 
     device = BLEDevice(address, name, None)

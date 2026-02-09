@@ -22,15 +22,19 @@ class EasyHomeEntity(CoordinatorEntity[EasyHomeDataUpdateCoordinator]):
         super().__init__(coordinator)
 
         address = coordinator.config_entry.data[CONF_ADDRESS]
+        normalized_address = format_mac(address)
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, format_mac(address))},
+            identifiers={(DOMAIN, normalized_address)},
             name="Easy@Home EBT-300",
             manufacturer="Easy@Home",
             model="EBT-300",
             connections={(CONNECTION_BLUETOOTH, address)},
         )
+        self._normalized_address = normalized_address
 
     @property
     def available(self) -> bool:
         """Return True if the entity is available."""
-        return super().available and self.coordinator.device.connected
+        # Preserve last known measurement even if the device powers off; availability
+        # tracks having data rather than current connection state.
+        return super().available and self.coordinator.data is not None

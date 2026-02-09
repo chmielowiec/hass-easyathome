@@ -66,6 +66,19 @@ async def test_temperature_sensor_no_data(
 
     assert sensor.native_value is None
 
+@pytest.mark.asyncio
+async def test_temperature_sensor_available_with_last_value(
+    hass: HomeAssistant, mock_temperature_measurement
+) -> None:
+    """Sensor stays available with last measurement after device powers off."""
+
+    mock_coordinator = MagicMock()
+    mock_coordinator.data = mock_temperature_measurement
+
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
+
+    assert sensor.available is True
+
 
 @pytest.mark.asyncio
 async def test_temperature_sensor_restore_state(

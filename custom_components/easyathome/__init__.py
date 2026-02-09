@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant
 
 from .coordinator import EasyHomeConfigEntry, EasyHomeDataUpdateCoordinator
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BUTTON]
+PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: EasyHomeConfigEntry) -> bool:

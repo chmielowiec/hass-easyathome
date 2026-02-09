@@ -40,7 +40,7 @@ class EasyHomeTemperatureSensor(EasyHomeEntity, RestoreSensor, SensorEntity):
     def __init__(self, coordinator: EasyHomeConfigEntry) -> None:
         """Initialize the temperature sensor."""
         super().__init__(coordinator)
-        self._attr_unique_id = f"{self.device_info['connections']}_temperature"
+        self._attr_unique_id = f"{self._normalized_address}_temperature"
 
     @property
     def native_value(self) -> float | None:

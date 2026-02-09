@@ -1,70 +1,69 @@
 """Tests for Easy@Home integration setup and teardown."""
 
-from unittest.mock import AsyncMock, patch
+import sys
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.setup import async_setup_component
 
 from custom_components.easyathome.const import DOMAIN
+
+# Skip all init tests on macOS since integration requires bluetooth component (Linux DBus)
+pytestmark = pytest.mark.skipif(
+    sys.platform == "darwin",
+    reason="Integration setup requires bluetooth component (DBus/Linux only)",
+)
+
+
+@pytest.fixture
+def mock_config_entry():
+    """Create a mock config entry."""
+    from pytest_homeassistant_custom_component.common import MockConfigEntry
+
+    return MockConfigEntry(
+        domain=DOMAIN,
+        title="EBT-300",
+        data={"address": "AA:BB:CC:DD:EE:FF"},
+        unique_id="AA:BB:CC:DD:EE:FF",
+    )
 
 
 @pytest.mark.asyncio
 async def test_async_setup_entry(
-    hass: HomeAssistant, mock_easy_home_device
+    hass: HomeAssistant, mock_config_entry, mock_easy_home_device
 ) -> None:
     """Test async_setup_entry."""
-    from homeassistant.config_entries import ConfigEntry
-
-    config_entry = ConfigEntry(
-        version=1,
-        domain=DOMAIN,
-        title="EBT-300",
-        data={"address": "AA:BB:CC:DD:EE:FF"},
-        options={},
-        entry_id="test_entry_id",
-        unique_id="AA:BB:CC:DD:EE:FF",
-    )
-
     with patch(
-        "custom_components.easyathome.EasyHomeDataUpdateCoordinator"
-    ) as mock_coordinator_class:
-        mock_coordinator = AsyncMock()
-        mock_coordinator.async_config_entry_first_refresh = AsyncMock()
-        mock_coordinator_class.return_value = mock_coordinator
-
-        result = await hass.config_entries.async_setup(config_entry)
+        "custom_components.easyathome.coordinator.EasyHomeDevice",
+        return_value=mock_easy_home_device,
+    ), patch(
+        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
+        return_value=1,
+    ):
+        mock_config_entry.add_to_hass(hass)
+        result = await hass.config_entries.async_setup(mock_config_entry.entry_id)
         assert result is True
 
 
 @pytest.mark.asyncio
 async def test_async_unload_entry(
-    hass: HomeAssistant, mock_easy_home_device
+    hass: HomeAssistant, mock_config_entry, mock_easy_home_device
 ) -> None:
     """Test async_unload_entry."""
-    from homeassistant.config_entries import ConfigEntry
-
-    config_entry = ConfigEntry(
-        version=1,
-        domain=DOMAIN,
-        title="EBT-300",
-        data={"address": "AA:BB:CC:DD:EE:FF"},
-        options={},
-        entry_id="test_entry_id",
-        unique_id="AA:BB:CC:DD:EE:FF",
-    )
+    mock_easy_home_device.connected = True
 
     with patch(
-        "custom_components.easyathome.EasyHomeDataUpdateCoordinator"
-    ) as mock_coordinator_class:
-        mock_coordinator = AsyncMock()
-        mock_coordinator.async_config_entry_first_refresh = AsyncMock()
-        mock_coordinator.async_shutdown = AsyncMock()
-        mock_coordinator_class.return_value = mock_coordinator
-
-        # Setup
-        await hass.config_entries.async_setup(config_entry)
+        "custom_components.easyathome.coordinator.EasyHomeDevice",
+        return_value=mock_easy_home_device,
+    ), patch(
+        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
+        return_value=1,
+    ):
+        mock_config_entry.add_to_hass(hass)
+        await hass.config_entries.async_setup(mock_config_entry.entry_id)
 
         # Unload
-        result = await hass.config_entries.async_unload_entry(config_entry)
+        result = await hass.config_entries.async_unload(mock_config_entry.entry_id)
         assert result is True
+        mock_easy_home_device.disconnect.assert_called_once()

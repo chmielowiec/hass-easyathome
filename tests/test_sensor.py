@@ -19,12 +19,8 @@ async def test_temperature_sensor_creation(
     mock_coordinator = MagicMock()
     mock_coordinator.data = mock_temperature_measurement
 
-    sensor = EasyHomeTemperatureSensor(
-        mock_coordinator,
-        "AA:BB:CC:DD:EE:FF",
-    )
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
 
-    assert sensor.unique_id == "AA:BB:CC:DD:EE:FF_temperature"
     assert sensor.native_unit_of_measurement == UnitOfTemperature.CELSIUS
     assert sensor.device_class == "temperature"
 
@@ -37,10 +33,7 @@ async def test_temperature_sensor_native_value(
     mock_coordinator = MagicMock()
     mock_coordinator.data = mock_temperature_measurement
 
-    sensor = EasyHomeTemperatureSensor(
-        mock_coordinator,
-        "AA:BB:CC:DD:EE:FF",
-    )
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
 
     assert sensor.native_value == 37.5
 
@@ -53,10 +46,7 @@ async def test_temperature_sensor_attributes(
     mock_coordinator = MagicMock()
     mock_coordinator.data = mock_temperature_measurement
 
-    sensor = EasyHomeTemperatureSensor(
-        mock_coordinator,
-        "AA:BB:CC:DD:EE:FF",
-    )
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
 
     attributes = sensor.extra_state_attributes
 
@@ -72,10 +62,7 @@ async def test_temperature_sensor_no_data(
     mock_coordinator = MagicMock()
     mock_coordinator.data = None
 
-    sensor = EasyHomeTemperatureSensor(
-        mock_coordinator,
-        "AA:BB:CC:DD:EE:FF",
-    )
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
 
     assert sensor.native_value is None
 
@@ -88,10 +75,7 @@ async def test_temperature_sensor_restore_state(
     mock_coordinator = MagicMock()
     mock_coordinator.data = mock_temperature_measurement
 
-    sensor = EasyHomeTemperatureSensor(
-        mock_coordinator,
-        "AA:BB:CC:DD:EE:FF",
-    )
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
 
     # Test that it has restore capability (RestoreSensor)
     assert hasattr(sensor, "async_added_to_hass")

@@ -15,7 +15,7 @@ from homeassistant.components.bluetooth import (
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_ADDRESS
 
-from .const import DOMAIN, SERVICE_UUID
+from .const import DISCOVERY_NAMES, DISCOVERY_SERVICE_UUIDS, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,6 +31,19 @@ class Discovery:
 def get_title(discovery_info: BluetoothServiceInfoBleak) -> str:
     """Return a title for the discovered device."""
     return f"Easy@Home {discovery_info.address}"
+
+
+def _is_supported_device(discovery_info: BluetoothServiceInfoBleak) -> bool:
+    """Return True if the BLE advertisement looks like our device."""
+
+    if any(
+        uuid.lower() in DISCOVERY_SERVICE_UUIDS
+        for uuid in discovery_info.service_uuids
+    ):
+        return True
+
+    name = (discovery_info.name or discovery_info.local_name or "").lower()
+    return name in DISCOVERY_NAMES
 
 
 class EasyHomeConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -98,7 +111,7 @@ class EasyHomeConfigFlow(ConfigFlow, domain=DOMAIN):
             address = discovery_info.address
             if address in current_addresses or address in self._discovered_devices:
                 continue
-            if SERVICE_UUID in discovery_info.service_uuids:
+            if _is_supported_device(discovery_info):
                 self._discovered_devices[address] = Discovery(
                     get_title(discovery_info), discovery_info
                 )

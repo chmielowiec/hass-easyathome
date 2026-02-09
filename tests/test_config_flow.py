@@ -40,7 +40,9 @@ async def test_bluetooth_discovery_flow(
 
 
 @pytest.mark.asyncio
-async def test_user_flow(hass: HomeAssistant, discovery_info: BluetoothServiceInfo) -> None:
+async def test_user_flow(
+    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
+) -> None:
     """Test user initiated flow."""
     with patch(
         "custom_components.easyathome.config_flow.async_discovered_service_info",
@@ -87,7 +89,9 @@ async def test_flow_duplicate_abort(
 
 
 @pytest.mark.asyncio
-async def test_flow_entry_created(hass: HomeAssistant, discovery_info: BluetoothServiceInfo) -> None:
+async def test_flow_entry_created(
+    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
+) -> None:
     """Test flow creates config entry."""
     with patch(
         "custom_components.easyathome.config_flow.async_discovered_service_info",

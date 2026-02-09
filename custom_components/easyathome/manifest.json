@@ -23,7 +23,7 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/chmielowiec/hass-easyathome/issues",
   "requirements": [
-    "easyathome-ble@git+https://github.com/chmielowiec/easyathome-ble.git@standard-services"
+    "easyathome-ble@git+https://github.com/chmielowiec/easyathome-ble.git@v0.2.1"
   ],
   "version": "0.1.0"
 }

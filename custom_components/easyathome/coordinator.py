@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from typing import TypeAlias
 
 from easyathome_ble import EasyHomeDevice, TemperatureMeasurement
 from bleak.exc import BleakError
@@ -17,7 +18,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN
 
-type EasyHomeConfigEntry = ConfigEntry[EasyHomeDataUpdateCoordinator]
+EasyHomeConfigEntry: TypeAlias = ConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=30)

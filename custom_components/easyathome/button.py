@@ -19,22 +19,6 @@ from .entity import EasyHomeEntity
 PARALLEL_UPDATES = 1  # One connection at a time
 
 
-BUTTON_DESCRIPTIONS = (
-    ButtonEntityDescription(
-        key="sync_time",
-        translation_key="sync_time",
-        icon="mdi:calendar-clock",
-        entity_category=EntityCategory.CONFIG,
-    ),
-    ButtonEntityDescription(
-        key="set_celsius",
-        translation_key="set_celsius",
-        icon="mdi:temperature-celsius",
-        entity_category=EntityCategory.CONFIG,
-    ),
-)
-
-
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: EasyHomeConfigEntry,
@@ -43,8 +27,10 @@ async def async_setup_entry(
     """Set up the Easy@Home button platform."""
     coordinator = entry.runtime_data
     async_add_entities(
-        EasyHomeButtonEntity(coordinator, description)
-        for description in BUTTON_DESCRIPTIONS
+        [
+            SyncTimeButton(coordinator),
+            SetCelsiusButton(coordinator),
+        ]
     )
 
 
@@ -89,3 +75,32 @@ class EasyHomeButtonEntity(EasyHomeEntity, ButtonEntity):
 
         finally:
             await device.disconnect()
+
+
+class SyncTimeButton(EasyHomeButtonEntity):
+    """Representation of an Easy@Home sync time button."""
+
+    def __init__(self, coordinator: EasyHomeConfigEntry) -> None:
+        """Initialize the button."""
+        description = ButtonEntityDescription(
+            key="sync_time",
+            translation_key="sync_time",
+            icon="mdi:calendar-clock",
+            entity_category=EntityCategory.CONFIG,
+        )
+        super().__init__(coordinator, description)
+
+
+class SetCelsiusButton(EasyHomeButtonEntity):
+    """Representation of an Easy@Home set celsius button."""
+
+    def __init__(self, coordinator: EasyHomeConfigEntry) -> None:
+        """Initialize the button."""
+        description = ButtonEntityDescription(
+            key="set_celsius",
+            translation_key="set_celsius",
+            icon="mdi:temperature-celsius",
+            entity_category=EntityCategory.CONFIG,
+        )
+        super().__init__(coordinator, description)
+

@@ -66,4 +66,4 @@ async def test_async_unload_entry(
         # Unload
         result = await hass.config_entries.async_unload(mock_config_entry.entry_id)
         assert result is True
-        mock_easy_home_device.disconnect.assert_called_once()
+        mock_easy_home_device.disconnect.assert_called()

@@ -33,7 +33,7 @@ def mock_advertisement_data():
     """Create mock advertisement data."""
     ad_data = MagicMock()
     ad_data.local_name = "EBT-300"
-    ad_data.service_uuids = ["0000ffe0-0000-1000-8000-00805f9b34fb"]
+    ad_data.service_uuids = ["00001809-0000-1000-8000-00805f9b34fb"]
     ad_data.rssi = -60
     return ad_data
 
@@ -69,7 +69,7 @@ def discovery_info():
     rssi = -60
     manufacturer_data: dict[int, bytes] = {}
     service_data: dict[str, bytes] = {}
-    service_uuids = ["0000ffe0-0000-1000-8000-00805f9b34fb"]
+    service_uuids = ["00001809-0000-1000-8000-00805f9b34fb"]
     source = "local"
 
     device = BLEDevice(address, name, None)

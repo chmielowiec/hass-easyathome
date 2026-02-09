@@ -22,13 +22,15 @@ class EasyHomeEntity(CoordinatorEntity[EasyHomeDataUpdateCoordinator]):
         super().__init__(coordinator)
 
         address = coordinator.config_entry.data[CONF_ADDRESS]
+        normalized_address = format_mac(address)
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, format_mac(address))},
+            identifiers={(DOMAIN, normalized_address)},
             name="Easy@Home EBT-300",
             manufacturer="Easy@Home",
             model="EBT-300",
             connections={(CONNECTION_BLUETOOTH, address)},
         )
+        self._normalized_address = normalized_address
 
     @property
     def available(self) -> bool:

@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from homeassistant import config_entries
-from homeassistant.components.bluetooth import BluetoothServiceInfo
+from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
@@ -21,7 +21,7 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.mark.asyncio
 async def test_bluetooth_discovery_flow(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfo
+    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
 ) -> None:
     """Test Bluetooth discovery flow."""
     # Mock bluetooth component being loaded
@@ -56,7 +56,7 @@ async def test_user_flow(hass: HomeAssistant, discovery_info: BluetoothServiceIn
 
 @pytest.mark.asyncio
 async def test_flow_duplicate_abort(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfo
+    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
 ) -> None:
     """Test flow aborts for duplicate device."""
     with patch(

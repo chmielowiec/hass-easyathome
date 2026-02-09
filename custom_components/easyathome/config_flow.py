@@ -9,13 +9,13 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant.components.bluetooth import (
-    BluetoothServiceInfo,
+    BluetoothServiceInfoBleak,
     async_discovered_service_info,
 )
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_ADDRESS
 
-from .const import DOMAIN
+from .const import DOMAIN, SERVICE_UUID
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,10 +25,10 @@ class Discovery:
     """Represents a discovered Bluetooth device."""
 
     title: str
-    discovery_info: BluetoothServiceInfo
+    discovery_info: BluetoothServiceInfoBleak
 
 
-def get_title(discovery_info: BluetoothServiceInfo) -> str:
+def get_title(discovery_info: BluetoothServiceInfoBleak) -> str:
     """Return a title for the discovered device."""
     return f"Easy@Home {discovery_info.address}"
 
@@ -43,7 +43,7 @@ class EasyHomeConfigFlow(ConfigFlow, domain=DOMAIN):
         self._discovered_devices: dict[str, Discovery] = {}
 
     async def async_step_bluetooth(
-        self, discovery_info: BluetoothServiceInfo
+        self, discovery_info: BluetoothServiceInfoBleak
     ) -> ConfigFlowResult:
         """Handle the bluetooth discovery step."""
         _LOGGER.debug("Discovered Easy@Home device: %s", discovery_info)
@@ -98,8 +98,7 @@ class EasyHomeConfigFlow(ConfigFlow, domain=DOMAIN):
             address = discovery_info.address
             if address in current_addresses or address in self._discovered_devices:
                 continue
-            # Only show Easy@Home devices (those with our service UUID)
-            if "0000ffe0-0000-1000-8000-00805f9b34fb" in discovery_info.service_uuids:
+            if SERVICE_UUID in discovery_info.service_uuids:
                 self._discovered_devices[address] = Discovery(
                     get_title(discovery_info), discovery_info
                 )

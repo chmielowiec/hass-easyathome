@@ -15,7 +15,6 @@ from homeassistant.const import CONF_ADDRESS
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN
 
@@ -103,11 +102,6 @@ class EasyHomeDataUpdateCoordinator(DataUpdateCoordinator[TemperatureMeasurement
                 "Connected to Easy@Home device: %s",
                 self.config_entry.data[CONF_ADDRESS],
             )
-            # Refresh device clock to Home Assistant time via custom service
-            try:
-                await self.device.set_datetime(dt_util.now())
-            except (BleakError, ValueError) as err:
-                _LOGGER.debug("Failed to sync device time: %s", err)
         except (BleakError, TimeoutError) as ex:
             _LOGGER.debug(
                 "Could not connect to Easy@Home device: %s, Error: %s",

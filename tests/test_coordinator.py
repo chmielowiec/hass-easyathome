@@ -111,10 +111,10 @@ async def test_coordinator_async_shutdown(
 
 
 @pytest.mark.asyncio
-async def test_coordinator_syncs_time_on_connect(
+async def test_coordinator_connects_on_update(
     hass: HomeAssistant, mock_easy_home_device
 ) -> None:
-    """Ensure coordinator syncs time after connecting via custom service."""
+    """Ensure coordinator connects and updates BLE device on refresh."""
 
     mock_entry = MockConfigEntry(
         domain=DOMAIN,
@@ -140,4 +140,4 @@ async def test_coordinator_syncs_time_on_connect(
 
         mock_easy_home_device.update_ble_device.assert_called_once_with(ble_device)
         mock_easy_home_device.connect.assert_awaited_once()
-        mock_easy_home_device.set_datetime.assert_awaited()
+        mock_easy_home_device.set_datetime.assert_not_awaited()

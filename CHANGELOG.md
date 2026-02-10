@@ -29,3 +29,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HACS integration
 
 [0.1.0]: https://github.com/chmielowiec/hass-easyathome/releases/tag/v0.1.0
+
+## [0.1.1] - 2026-02-10
+
+### Fixed
+- Update easyathome-ble dependency to 0.2.1
+- Improve Bluetooth discovery matching for the device
+- Keep the last measurement available after device power-off
+
+[0.1.1]: https://github.com/chmielowiec/hass-easyathome/releases/tag/v0.1.1

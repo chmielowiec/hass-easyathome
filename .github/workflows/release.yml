@@ -58,13 +58,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Comment on release (HACS)
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🏠 This release is HACS compatible!\n\nInstall via HACS:\n1. Open Home Assistant Settings → Devices & Services\n2. Click "Create Automation"\n3. Add HACS custom repository: `https://github.com/${{ github.repository }}`'
-            })

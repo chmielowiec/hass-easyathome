@@ -41,13 +41,14 @@ class EasyHomeTemperatureSensor(EasyHomeEntity, RestoreSensor, SensorEntity):
         """Initialize the temperature sensor."""
         super().__init__(coordinator)
         self._attr_unique_id = f"{self._normalized_address}_temperature"
+        self._attr_native_value: float | None = None
 
     @property
     def native_value(self) -> float | None:
         """Return the temperature value."""
         if self.coordinator.data:
-            return self.coordinator.data.temperature
-        return None
+            self._attr_native_value = self.coordinator.data.temperature
+        return self._attr_native_value
 
     @property
     def extra_state_attributes(self) -> dict[str, str | bool] | None:

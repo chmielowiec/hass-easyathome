@@ -7,6 +7,8 @@ import pytest
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.restore_state import STORAGE_KEY as RESTORE_STATE_KEY
+from homeassistant.util.json import JsonObjectType
 
 from custom_components.easyathome.sensor import EasyHomeTemperatureSensor
 
@@ -92,3 +94,63 @@ async def test_temperature_sensor_restore_state(
 
     # Test that it has restore capability (RestoreSensor)
     assert hasattr(sensor, "async_added_to_hass")
+
+
+@pytest.mark.asyncio
+async def test_temperature_sensor_restores_last_value_on_startup(
+    hass: HomeAssistant,
+) -> None:
+    """Test that temperature sensor restores last value after HA restart."""
+    # Create a mock coordinator with no data (simulating device being offline)
+    mock_coordinator = MagicMock()
+    mock_coordinator.data = None
+    mock_coordinator.config_entry = MagicMock()
+    mock_coordinator.config_entry.data = {"address": "AA:BB:CC:DD:EE:FF"}
+
+    # Create sensor
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
+    
+    # Mock the restore state functionality
+    last_sensor_data = MagicMock()
+    last_sensor_data.native_value = 36.8
+    
+    with patch.object(
+        sensor, "async_get_last_sensor_data", return_value=last_sensor_data
+    ):
+        await sensor.async_added_to_hass()
+    
+    # Verify that the sensor restored the last value
+    assert sensor.native_value == 36.8
+    
+
+@pytest.mark.asyncio
+async def test_temperature_sensor_updates_value_when_new_data_arrives(
+    hass: HomeAssistant, mock_temperature_measurement
+) -> None:
+    """Test that sensor updates value when new data arrives from coordinator."""
+    # Create a mock coordinator with no data initially
+    mock_coordinator = MagicMock()
+    mock_coordinator.data = None
+    mock_coordinator.config_entry = MagicMock()
+    mock_coordinator.config_entry.data = {"address": "AA:BB:CC:DD:EE:FF"}
+
+    # Create sensor
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
+    
+    # Mock the restore state functionality with old value
+    last_sensor_data = MagicMock()
+    last_sensor_data.native_value = 36.8
+    
+    with patch.object(
+        sensor, "async_get_last_sensor_data", return_value=last_sensor_data
+    ):
+        await sensor.async_added_to_hass()
+    
+    # Verify that the sensor restored the old value
+    assert sensor.native_value == 36.8
+    
+    # Simulate new data arriving from the coordinator
+    mock_coordinator.data = mock_temperature_measurement
+    
+    # Verify that the sensor now shows the new value
+    assert sensor.native_value == 37.5

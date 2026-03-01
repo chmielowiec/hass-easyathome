@@ -103,3 +103,18 @@ def discovery_info():
         None,
         None,
     )
+
+
+@pytest.fixture
+def mock_coordinator_setup(mock_easy_home_device):
+    """Mock coordinator setup dependencies for config flow tests."""
+    from unittest.mock import patch
+
+    with patch(
+        "custom_components.easyathome.coordinator.EasyHomeDevice",
+        return_value=mock_easy_home_device,
+    ), patch(
+        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
+        return_value=1,
+    ):
+        yield

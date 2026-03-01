@@ -21,19 +21,15 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.mark.asyncio
 async def test_bluetooth_discovery_flow(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak, mock_easy_home_device
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test Bluetooth discovery flow."""
     # Mock bluetooth component being loaded
     with patch(
         "custom_components.easyathome.config_flow.async_discovered_service_info",
         return_value=[discovery_info],
-    ), patch(
-        "custom_components.easyathome.coordinator.EasyHomeDevice",
-        return_value=mock_easy_home_device,
-    ), patch(
-        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
-        return_value=1,
     ):
         result = await hass.config_entries.flow.async_init(
             DOMAIN,
@@ -47,18 +43,14 @@ async def test_bluetooth_discovery_flow(
 
 @pytest.mark.asyncio
 async def test_user_flow(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak, mock_easy_home_device
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test user initiated flow."""
     with patch(
         "custom_components.easyathome.config_flow.async_discovered_service_info",
         return_value=[discovery_info],
-    ), patch(
-        "custom_components.easyathome.coordinator.EasyHomeDevice",
-        return_value=mock_easy_home_device,
-    ), patch(
-        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
-        return_value=1,
     ):
         result = await hass.config_entries.flow.async_init(
             DOMAIN, context={"source": config_entries.SOURCE_USER}
@@ -70,18 +62,14 @@ async def test_user_flow(
 
 @pytest.mark.asyncio
 async def test_flow_duplicate_abort(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak, mock_easy_home_device
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test flow aborts for duplicate device."""
     with patch(
         "custom_components.easyathome.config_flow.async_discovered_service_info",
         return_value=[discovery_info],
-    ), patch(
-        "custom_components.easyathome.coordinator.EasyHomeDevice",
-        return_value=mock_easy_home_device,
-    ), patch(
-        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
-        return_value=1,
     ):
         # Create first entry
         result = await hass.config_entries.flow.async_init(
@@ -108,18 +96,14 @@ async def test_flow_duplicate_abort(
 
 @pytest.mark.asyncio
 async def test_flow_entry_created(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak, mock_easy_home_device
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test flow creates config entry."""
     with patch(
         "custom_components.easyathome.config_flow.async_discovered_service_info",
         return_value=[discovery_info],
-    ), patch(
-        "custom_components.easyathome.coordinator.EasyHomeDevice",
-        return_value=mock_easy_home_device,
-    ), patch(
-        "custom_components.easyathome.coordinator.bluetooth.async_scanner_count",
-        return_value=1,
     ):
         result = await hass.config_entries.flow.async_init(
             DOMAIN,

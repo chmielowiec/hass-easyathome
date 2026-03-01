@@ -68,3 +68,4 @@ class EasyHomeTemperatureSensor(EasyHomeEntity, RestoreSensor, SensorEntity):
         # Restore last sensor data if available
         if (last_sensor_data := await self.async_get_last_sensor_data()) is not None:
             self._attr_native_value = last_sensor_data.native_value
+            self.async_write_ha_state()

@@ -116,9 +116,9 @@ async def test_temperature_sensor_restores_last_value_on_startup(
     
     with patch.object(
         sensor, "async_get_last_sensor_data", return_value=last_sensor_data
-    ):
+    ), patch.object(sensor, "async_write_ha_state"):
         await sensor.async_added_to_hass()
-    
+
     # Verify that the sensor restored the last value
     assert sensor.native_value == 36.8
     
@@ -136,21 +136,73 @@ async def test_temperature_sensor_updates_value_when_new_data_arrives(
 
     # Create sensor
     sensor = EasyHomeTemperatureSensor(mock_coordinator)
-    
+
     # Mock the restore state functionality with old value
     last_sensor_data = MagicMock()
     last_sensor_data.native_value = 36.8
-    
+
     with patch.object(
         sensor, "async_get_last_sensor_data", return_value=last_sensor_data
-    ):
+    ), patch.object(sensor, "async_write_ha_state"):
         await sensor.async_added_to_hass()
-    
+
     # Verify that the sensor restored the old value
     assert sensor.native_value == 36.8
-    
+
     # Simulate new data arriving from the coordinator
     mock_coordinator.data = mock_temperature_measurement
-    
+
     # Verify that the sensor now shows the new value
     assert sensor.native_value == 37.5
+
+
+@pytest.mark.asyncio
+async def test_temperature_sensor_writes_ha_state_after_restore(
+    hass: HomeAssistant,
+) -> None:
+    """Test that async_write_ha_state is called after restoring a previous value.
+
+    This ensures the restored value is pushed into the HA state machine
+    immediately on startup, before the BLE device connects.
+    """
+    mock_coordinator = MagicMock()
+    mock_coordinator.data = None
+    mock_coordinator.config_entry = MagicMock()
+    mock_coordinator.config_entry.data = {"address": "AA:BB:CC:DD:EE:FF"}
+
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
+
+    last_sensor_data = MagicMock()
+    last_sensor_data.native_value = 36.8
+
+    with patch.object(
+        sensor, "async_get_last_sensor_data", return_value=last_sensor_data
+    ), patch.object(sensor, "async_write_ha_state") as mock_write_state:
+        await sensor.async_added_to_hass()
+
+    mock_write_state.assert_called_once()
+    assert sensor._attr_native_value == 36.8
+
+
+@pytest.mark.asyncio
+async def test_temperature_sensor_no_write_ha_state_without_restore_data(
+    hass: HomeAssistant,
+) -> None:
+    """Test that async_write_ha_state is not called when there is no saved state.
+
+    When no previous state exists (e.g. first ever startup), the sensor
+    should not trigger a redundant state write.
+    """
+    mock_coordinator = MagicMock()
+    mock_coordinator.data = None
+    mock_coordinator.config_entry = MagicMock()
+    mock_coordinator.config_entry.data = {"address": "AA:BB:CC:DD:EE:FF"}
+
+    sensor = EasyHomeTemperatureSensor(mock_coordinator)
+
+    with patch.object(
+        sensor, "async_get_last_sensor_data", return_value=None
+    ), patch.object(sensor, "async_write_ha_state") as mock_write_state:
+        await sensor.async_added_to_hass()
+
+    mock_write_state.assert_not_called()

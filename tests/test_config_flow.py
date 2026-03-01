@@ -21,7 +21,9 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.mark.asyncio
 async def test_bluetooth_discovery_flow(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test Bluetooth discovery flow."""
     # Mock bluetooth component being loaded
@@ -41,7 +43,9 @@ async def test_bluetooth_discovery_flow(
 
 @pytest.mark.asyncio
 async def test_user_flow(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test user initiated flow."""
     with patch(
@@ -58,7 +62,9 @@ async def test_user_flow(
 
 @pytest.mark.asyncio
 async def test_flow_duplicate_abort(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test flow aborts for duplicate device."""
     with patch(
@@ -90,7 +96,9 @@ async def test_flow_duplicate_abort(
 
 @pytest.mark.asyncio
 async def test_flow_entry_created(
-    hass: HomeAssistant, discovery_info: BluetoothServiceInfoBleak
+    hass: HomeAssistant,
+    discovery_info: BluetoothServiceInfoBleak,
+    mock_coordinator_setup,
 ) -> None:
     """Test flow creates config entry."""
     with patch(

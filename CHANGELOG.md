@@ -46,3 +46,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensure the temperature sensor's native value is updated correctly when new data is received
 
 [0.1.2]: https://github.com/chmielowiec/hass-easyathome/releases/tag/v0.1.2
+
+
+## [0.1.3] - 2026-03-02
+
+### Fixed
+- Write restored sensor state on entity restore so UI and state machine reflect
+	the last known value immediately after startup
+
+### Tests
+- Add `mock_coordinator_setup` fixture to centralise mocking of `EasyHomeDevice`
+	and BLE scanner in config-flow tests and refactor tests to use it
+
+[0.1.3]: https://github.com/chmielowiec/hass-easyathome/releases/tag/v0.1.3

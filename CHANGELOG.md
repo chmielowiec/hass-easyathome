@@ -59,3 +59,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	and BLE scanner in config-flow tests and refactor tests to use it
 
 [0.1.3]: https://github.com/chmielowiec/hass-easyathome/releases/tag/v0.1.3
+
+## [0.1.4] - 2026-03-23
+
+### Fixed
+- Update `easyathome-ble` dependency to `0.2.2` to include BLE command
+	write-mode fallback for devices returning `Request not supported`
+
+[0.1.4]: https://github.com/chmielowiec/hass-easyathome/releases/tag/v0.1.4

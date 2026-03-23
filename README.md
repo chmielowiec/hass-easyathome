@@ -1,107 +1,88 @@
-# Easy@Home Integration for Home Assistant
+# Easy@Home for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![GitHub release](https://img.shields.io/github/release/chmielowiec/hass-easyathome.svg)](https://github.com/chmielowiec/hass-easyathome/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Home Assistant integration for Easy@Home Bluetooth devices.
+Home Assistant integration for the [Easy@Home EBT-300](https://www.easy-home.com/) basal body temperature thermometer, built on top of the [easyathome-ble](https://github.com/chmielowiec/easyathome-ble) library.
 
-## Supported Devices
+## Supported devices
 
-- **EBT-300**: Basal body temperature thermometer for fertility tracking
+| Device  | Description                                             |
+| ------- | ------------------------------------------------------- |
+| EBT-300 | Basal body temperature thermometer (fertility tracking) |
 
 ## Features
 
-- ✅ Automatic Bluetooth discovery via service UUID
-- ✅ Real-time temperature measurements
-- ✅ Timestamped readings
-- ✅ Historical data support  
-- ✅ Time synchronization button
-- ✅ Temperature unit configuration button
-- ✅ Sensor state restoration after restart
+- Automatic Bluetooth discovery (no manual address entry needed)
+- Real-time temperature pushed via BLE GATT notifications
+- Measurement timestamp and live/historical reading flag exposed as attributes
+- Last known state restored after Home Assistant restart
+- Requires Home Assistant 2024.1+
 
 ## Installation
 
-### HACS (Recommended)
+### HACS (recommended)
 
-1. Open HACS in your Home Assistant instance
-2. Click on "Integrations"
-3. Click the three dots in the top right corner
-4. Select "Custom repositories"
-5. Add this repository URL: `https://github.com/chmielowiec/hass-easyathome`
-6. Select category: "Integration"
-7. Click "Add"
-8. Find "Easy@Home" in the integration list and click "Download"
-9. Restart Home Assistant
+1. In Home Assistant, open **HACS → Integrations**
+2. Click the three-dot menu → **Custom repositories**
+3. Add `https://github.com/chmielowiec/hass-easyathome` with category **Integration**
+4. Search for **Easy@Home** and click **Download**
+5. Restart Home Assistant
 
-### Manual Installation
+### Manual
 
-1. Copy the `custom_components/easyathome` directory to your Home Assistant's `custom_components` directory
+1. Copy `custom_components/easyathome/` into your Home Assistant `custom_components/` directory
 2. Restart Home Assistant
 
-## Configuration
+## Setup
 
-### Automatic Discovery
+The integration discovers the EBT-300 automatically via Bluetooth once Home Assistant detects it.
 
-The integration will automatically discover Easy@Home EBT-300 devices via Bluetooth.
+1. Power on the EBT-300 and bring it within Bluetooth range
+2. Go to **Settings → Devices & Services**
+3. The device will appear as a discovered integration — click **Configure** and confirm
 
-1. Ensure Bluetooth is enabled on your Home Assistant device
-2. Turn on your EBT-300 thermometer
-3. Go to **Settings** → **Devices & Services**
-4. Click **Add Integration**
-5. Search for "Easy@Home"
-6. Follow the configuration wizard
+Alternatively, click **Add Integration**, search for **Easy@Home**, and select the device from the list.
 
-### Device Requirements
-
-- Bluetooth Low Energy (BLE) capable Home Assistant host
-- EBT-300 thermometer within Bluetooth range
-- Working Bluetooth adapter
+**Requirements:**
+- Home Assistant host with a Bluetooth Low Energy (BLE) adapter
+- No other app connected to the device at setup time
 
 ## Entities
 
 ### Sensor
 
-- **Temperature**: Current temperature reading in Celsius
-  - Attributes:
-    - `measurement_time`: Timestamp of the measurement
-    - `is_live_reading`: Whether this is a live vs historical reading
+| Entity      | Unit | Description                 |
+| ----------- | ---- | --------------------------- |
+| Temperature | °C   | Current temperature reading |
 
-### Buttons
+**Attributes:**
 
-- **Sync time**: Synchronize device time with Home Assistant
-- **Set celsius**: Set temperature unit to Celsius
-
-## Usage
-
-Once configured, the integration will:
-
-1. Automatically connect to your EBT-300 device
-2. Receive temperature notifications in real-time
-3. Display current temperature and measurement time
-4. Maintain connection and reconnect if necessary
-5. Restore last known state after Home Assistant restart
+| Attribute          | Type               | Description                                                         |
+| ------------------ | ------------------ | ------------------------------------------------------------------- |
+| `measurement_time` | ISO 8601 timestamp | Time of the measurement                                             |
+| `is_live_reading`  | boolean            | `true` for real-time readings, `false` for recalled historical data |
 
 ## Troubleshooting
 
-### Device Not Discovered
+### Device not discovered
 
-- Ensure the EBT-300 is powered on and within range
-- Check that Bluetooth is enabled on your Home Assistant device
-- Verify no other apps are connected to the device
-- Try restarting the thermometer
+- Confirm the EBT-300 is powered on and within range
+- Ensure no other app (e.g. the official Easy@Home app) is connected to the device
+- Check that your Home Assistant host has a working Bluetooth adapter
+- Restart the thermometer and wait 30 seconds
 
-### Connection Issues
+### No sensor data after setup
 
-- The device uses an active BLE connection (not passive)
-- Only one connection at a time is supported
-- If connection fails, the integration will retry automatically
-- Check Home Assistant logs for detailed error messages
+- The device sends data via BLE notifications; the integration connects and waits for the device to push a reading
+- Data is only pushed when a measurement is taken on the device
+- Check logs for connection errors (see debug logging below)
 
-### Enable Debug Logging
-
-Add to `configuration.yaml`:
+### Enable debug logging
 
 ```yaml
+# configuration.yaml
 logger:
   default: info
   logs:
@@ -111,31 +92,32 @@ logger:
 
 ## Development
 
-### Library
+### Architecture
 
-This integration uses the [easyathome-ble](https://github.com/chmielowiec/easyathome-ble) library.
+The integration uses a `DataUpdateCoordinator` that maintains a persistent BLE connection to the device. Temperature data arrives asynchronously through GATT notifications rather than being polled. A periodic update cycle (every 30 s) reconnects the device if the connection drops.
+
+```
+Home Assistant
+└── EasyHomeDataUpdateCoordinator  (manages BLE connection)
+    └── EasyHomeDevice             (easyathome-ble library)
+        └── BLE GATT notifications → temperature readings
+```
+
+### Running tests
+
+```bash
+pip install -r requirements_test.txt
+pytest tests/
+```
 
 ### Contributing
 
-Contributions are welcome! Please open an issue or pull request.
+Contributions are welcome — please open an issue or pull request on GitHub.
 
 ## License
 
-MIT License - see LICENSE file
-
-## Credits
-
-- Developed by Robert Chmielowiec
-- Uses [bleak](https://github.com/hbldh/bleak) for Bluetooth communication
-- Inspired by the Home Assistant probe_plus integration
-
-## Support
-
-- [Report Issues](https://github.com/chmielowiec/hass-easyathome/issues)
-- [Home Assistant Community](https://community.home-assistant.io/)
-
----
+MIT — see [LICENSE](LICENSE) for details.
 
 ## Disclaimer
 
-This is not an official Easy@Home product. Easy@Home is a trademark of its respective owner.
+This is an unofficial integration and is not affiliated with or endorsed by Easy@Home. Easy@Home is a trademark of its respective owner.

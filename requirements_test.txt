@@ -5,5 +5,5 @@ pytest-cov>=7.0.0
 pyserial>=3.5
 serialx>=0.6.2
 aioesphomeapi>=42.8.0
-aiousbwatcher>=1.1.1
+aiousbwatcher>=1.1.2
 easyathome-ble==0.2.4

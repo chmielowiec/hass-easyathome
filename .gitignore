@@ -13,6 +13,7 @@ build/
 .coverage
 htmlcov/
 .tox/
+coverage.xml
 
 # IDEs
 .vscode/

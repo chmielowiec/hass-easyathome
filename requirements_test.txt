@@ -3,7 +3,7 @@ pytest-homeassistant-custom-component>=0.13.336
 pytest-asyncio>=1.3.0
 pytest-cov>=7.1.0
 pyserial>=3.5
-serialx>=0.6.2
+serialx>=1.8.0
 aioesphomeapi>=42.8.0
 aiousbwatcher>=1.1.2
 easyathome-ble==0.2.4

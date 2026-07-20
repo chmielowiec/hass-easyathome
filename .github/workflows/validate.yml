@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Validate HACS
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       
       - name: HACS validation
         continue-on-error: true
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Validate with hassfest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       
       - name: Hassfest validation
         uses: home-assistant/actions/hassfest@master
@@ -35,7 +35,7 @@ jobs:
       matrix:
         python-version: ["3.14"]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v7

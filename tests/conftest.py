@@ -51,6 +51,7 @@ def mock_easy_home_device():
     device.disconnect = AsyncMock()
     device.set_datetime = AsyncMock()
     device.set_unit = AsyncMock()
+    device.device_disconnected_handler = MagicMock()
     return device
 
 

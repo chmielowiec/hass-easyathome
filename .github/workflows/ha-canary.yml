@@ -11,6 +11,11 @@ permissions:
 jobs:
   canary:
     runs-on: ubuntu-latest
+    # Dev channel tests against unreleased HA versions; the test framework (pytest-homeassistant-custom-component)
+    # is versioned for released HA, so it may use internal HA APIs that change before release.
+    # We let dev failures through without blocking the overall workflow — they signal upcoming breakages,
+    # not current release regressions. Pre-release failures are always blocking.
+    continue-on-error: ${{ matrix.ha-channel == 'dev' }}
     strategy:
       fail-fast: false
       matrix:

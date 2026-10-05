@@ -4,6 +4,6 @@ pytest-asyncio>=1.4.0
 pytest-cov>=7.1.0
 pyserial>=3.5
 serialx>=1.11.0
-aioesphomeapi>=46.5.0
+aioesphomeapi>=46.6.0
 aiousbwatcher>=1.1.2
 easyathome-ble==0.2.4

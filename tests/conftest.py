@@ -10,14 +10,6 @@ from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 
 from custom_components.easyathome.const import DOMAIN
 
-pytest_plugins = "pytest_homeassistant_custom_component"
-
-
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):
-    """Enable custom integrations for all tests."""
-    yield
-
 
 @pytest.fixture
 def mock_ble_device():
@@ -52,6 +44,7 @@ def mock_easy_home_device():
     device.set_datetime = AsyncMock()
     device.set_unit = AsyncMock()
     device.device_disconnected_handler = MagicMock()
+    device.update_ble_device = MagicMock()
     return device
 
 

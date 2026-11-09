@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from homeassistant.core import HomeAssistant
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.easyathome.coordinator import EasyHomeDataUpdateCoordinator
 from custom_components.easyathome.const import DOMAIN
@@ -141,3 +141,4 @@ async def test_coordinator_connects_on_update(
         mock_easy_home_device.update_ble_device.assert_called_once_with(ble_device)
         mock_easy_home_device.connect.assert_awaited_once()
         mock_easy_home_device.set_datetime.assert_not_awaited()
+

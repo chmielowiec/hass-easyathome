@@ -19,7 +19,7 @@ pytestmark = pytest.mark.skipif(
 @pytest.fixture
 def mock_config_entry():
     """Create a mock config entry."""
-    from pytest_homeassistant_custom_component.common import MockConfigEntry
+    from pytest_homeassistant.common import MockConfigEntry
 
     return MockConfigEntry(
         domain=DOMAIN,

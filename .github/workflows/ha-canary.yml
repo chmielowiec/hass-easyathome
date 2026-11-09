@@ -11,8 +11,7 @@ permissions:
 jobs:
   canary:
     runs-on: ubuntu-latest
-    # Dev channel tests against unreleased HA versions; the test framework (pytest-homeassistant-custom-component)
-    # is versioned for released HA, so it may use internal HA APIs that change before release.
+    # Dev channel tests against unreleased HA (and pytest-homeassistant from the same dev commit).
     # We let dev failures through without blocking the overall workflow — they signal upcoming breakages,
     # not current release regressions. Pre-release failures are always blocking.
     continue-on-error: ${{ matrix.ha-channel == 'dev' }}
@@ -37,11 +36,13 @@ jobs:
 
       - name: Install Home Assistant pre-release
         if: matrix.ha-channel == 'pre-release'
-        run: pip install --upgrade --pre homeassistant
+        run: pip install --upgrade --pre "pytest-homeassistant[bluetooth]"
 
       - name: Install Home Assistant dev
         if: matrix.ha-channel == 'dev'
-        run: pip install --upgrade "git+https://github.com/home-assistant/core.git@dev"
+        run: |
+          G=git+https://github.com/home-assistant/core.git@dev
+          pip install --upgrade "homeassistant @ $G" "pytest-homeassistant[bluetooth] @ $G#subdirectory=packages/pytest-homeassistant"
 
       - name: Check dependency resolution
         run: |
